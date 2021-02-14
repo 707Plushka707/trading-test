@@ -27,8 +27,8 @@ class TradeStrategy extends EventEmmiter {
         const ema200 = EMA(close, 200)
         const rsi = RSI(close);
 
-        lastMACD = macd[macd.length - 1];
-        beforeLastMACD = macd[macd.length - 2];
+        const lastMACD = macd[macd.length - 1];
+        const beforeLastMACD = macd[macd.length - 2];
         
         const logInfo = {
             datetime: getPrettyDatetime(),
