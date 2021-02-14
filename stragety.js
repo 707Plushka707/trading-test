@@ -27,22 +27,32 @@ class TradeStrategy extends EventEmmiter {
         const ema200 = EMA(close, 200)
         const rsi = RSI(close);
 
-        const lastMACD = macd[macd.length - 1];
-        const beforeLastMACD = macd[macd.length - 2];
+        const lastMACD = {
+            macd: macd[0][macd[0].length - 1],
+            signal: macd[1][macd[1].length - 1],
+            histogram: macd[2][macd[2].length - 1],
+        };
+
+        const beforeLastMACD = {
+            macd: macd[0][macd[0].length - 2],
+            signal: macd[1][macd[1].length - 2],
+            histogram: macd[2][macd[2].length - 2],
+        };
         
         const logInfo = {
             datetime: getPrettyDatetime(),
-            close: close[close.length],
-            macd: macd[macd.length - 1],
-            rsi: rsi[resizeBy.length -1],
-            ema: ema[ema.length -1]
+            close: close[close.length - 1],
+            macd: lastMACD,
+            rsi: rsi[rsi.length -1],
+            ema200: ema200[ema200.length -1]
         }
 
-        // if last macd > signal
-        if(lastMACD[0] > lastMACD[1]) {
+        console.log(logInfo);
+
+        if(lastMACD.macd > lastMACD.signal) {
 
             // if before last macd < signal
-            if(beforeLastMACD[0] < beforeLastMACD[1]) {
+            if(beforeLastMACD.macd < beforeLastMACD.signal) {
                 // close short
                 console.log("close short", logInfo);
 
@@ -52,10 +62,10 @@ class TradeStrategy extends EventEmmiter {
         }
 
         // if last macd < signal
-        if(lastMACD[0] < lastMACD[1]) {
+        if(lastMACD.macd < lastMACD.signal) {
 
             // if before last macd > signal
-            if(beforeLastMACD[0] > beforeLastMACD[1]) {
+            if(beforeLastMACD.macd > beforeLastMACD.signal) {
                 // close long
                 console.log("close long", logInfo);
 
