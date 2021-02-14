@@ -47,8 +47,6 @@ class TradeStrategy extends EventEmmiter {
             ema200: ema200[ema200.length -1]
         }
 
-        console.log(logInfo);
-
         if(lastMACD.macd > lastMACD.signal) {
 
             // if before last macd < signal
