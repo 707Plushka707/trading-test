@@ -1,4 +1,3 @@
-const config = require('./config');
 const Binance = require('node-binance-api');
 const EventEmmiter = require('events');
 
@@ -56,13 +55,28 @@ websocket format :
 
 class BinanceWrapper extends EventEmmiter {
 
-    constructor() {
+    #symbol;
+    #interval;
+    #websocket;
+
+    constructor(params) {
         super();
 
-        let websocketname = config.TRADING_SYMBOL.toLowerCase() + "@kline_" + config.TRADING_INTERVAL;
-        binance.futuresSubscribe(websocketname, (e) => {
-            if(e.k.x) {
+        const { symbol, interval } = params;
+        this.symbol = symbol;
+        this.interval = interval;
+    }
 
+    close() {
+        if(this.websocket) {
+            this.websocket.close();
+        }
+    }
+    
+    listen() {
+        this.websocketname = this.symbol.toLowerCase() + "@kline_" + this.interval;
+        this.websocket = binance.futuresSubscribe(websocketname, (e) => {
+            if(e.k.x) {
                 const klinePretty = {
                     opentime:e.k.t,
                     open:e.k.o,
@@ -83,16 +97,28 @@ class BinanceWrapper extends EventEmmiter {
         });
     }
 
-    async getHistoricalKlines() {
+    async getHistoricalKlines(params) {
+
+        let { startTime, limit } = params;
+
+        if(!limit) {
+            limit = 400;
+        }
+
         const klines = 
           await binance.futuresCandles(
-            config.TRADING_SYMBOL,
-            config.TRADING_INTERVAL,
+            this.symbol,
+            this.interval,
             {
-                limit:config.MAX_HISTORY,
-            });
+                limit,
+                startTime
+            }
+        );
 
-        klines.pop();
+        if(!startTime) {
+            klines.pop();
+        }
+
         const klinesPretty = [];
         klines.forEach((k) => {
             klinesPretty.push({
@@ -111,18 +137,6 @@ class BinanceWrapper extends EventEmmiter {
             });
         });
         return klinesPretty;
-      
-        // console.log(close);
-      
-        // const macd = MACD(close);
-        // console.log(macd);
-      
-        // const bbands = 
-        //   BBANDS(close,20)
-        // console.log(bbands);
-      
-        // const rsi = RSI(close)
-        // console.log(rsi)
     }
 }
 
