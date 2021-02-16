@@ -74,7 +74,7 @@ class BinanceWrapper extends EventEmmiter {
     }
     
     listen() {
-        this.websocketname = this.symbol.toLowerCase() + "@kline_" + this.interval;
+        let websocketname = this.symbol.toLowerCase() + "@kline_" + this.interval;
         this.websocket = binance.futuresSubscribe(websocketname, (e) => {
             if(e.k.x) {
                 const klinePretty = {
@@ -120,7 +120,9 @@ class BinanceWrapper extends EventEmmiter {
         }
 
         const klinesPretty = [];
-        klines.forEach((k) => {
+
+        for(let i = 0; i < klines.length; i++) {
+            const k = klines[i];
             klinesPretty.push({
                 opentime:k[0],
                 open:k[1],
@@ -135,7 +137,8 @@ class BinanceWrapper extends EventEmmiter {
                 takerquotevolume:k[10],
                 ignore:k[11],
             });
-        });
+        }
+
         return klinesPretty;
     }
 }

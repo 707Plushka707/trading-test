@@ -1,6 +1,11 @@
 
-function getPrettyDatetime() {
+function getPrettyDatetime(dateIn) {
+
     let date_ob = new Date();
+
+    if(dateIn) {
+        date_ob = new Date(dateIn);
+    }
 
     // current date
     // adjust 0 before single digit date

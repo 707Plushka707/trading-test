@@ -10,9 +10,9 @@ class MacdEma200Strategy extends TradeStrategy {
 
         // get close values
         const close = new Array();
-        this.klines.forEach(kline => {
-            close.push(kline.close);
-        });
+        for(let i = 0; i < this.klines.length; i++) {
+            close.push(this.klines[i].close);
+        }
 
         // get indicators
         const macd = MACD(close);
