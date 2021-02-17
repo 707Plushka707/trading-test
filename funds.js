@@ -6,9 +6,9 @@ const BASEASSET = 100;
 
 class Funds {
     
-    #currentLong = null;
-    #currentShort = null;
-    #outputFileName = 0;
+    #outputFileName = "";
+    currentLong = null;
+    currentShort = null;
     totalWin = 0;
 
 

@@ -3,9 +3,7 @@ const MacdEma = require('./strategy/macdstrategy');
 const MacdEma200Strategy = require('./strategy/macdema200strategy');
 const MacdEma200TrendStrategy = require('./strategy/macdema200trendstrategy');
 const BinanceWrapper = require('./binance');
-const Funds = require('./funds');
 const { sleep } = require('./utils/sleep');
-const { exportData, removeFile } = require('./utils/file');
 const { getPrettyDatetime } = require('./utils/date');
 
 const TEST_MODE = 1;
@@ -26,8 +24,8 @@ const startTestMode = async() => {
       const symbol = symbols[i];
       const period = periods[j];
 
-      const outputFileName = `output/result-${symbol}-${period}.csv`;
-      removeFile(outputFileName);
+      // const outputFileName = `output/result-${symbol}-${period}.csv`;
+      // removeFile(outputFileName);
 
       const bollingerEma200Strategy = new BollingerEma200Strategy();
       const macdEma = new MacdEma();
@@ -35,14 +33,10 @@ const startTestMode = async() => {
       const macdEma200TrendStrategy = new MacdEma200TrendStrategy();
 
       const strategies = new Array();
-      const funds = new Array();
 
       // strategies.push(bollingerEma200Strategy);
       strategies.push(macdEma);
       // strategies.push(macdEma200TrendStrategy);
-      funds.push(new Funds(outputFileName));
-      // funds.push(new Funds(outputFileName));
-      // funds.push(new Funds(outputFileName));
 
       const binance = new BinanceWrapper({
         symbol: symbol,
@@ -59,22 +53,8 @@ const startTestMode = async() => {
       for(k=0; k< strategies.length; k++) {
 
         const strategy = strategies[k];
-        let fund = funds[k];
 
         strategy.init(klines);
-  
-  
-        // -- Events Start
-      
-        strategy.on("openLong", fund.openLong)
-    
-        strategy.on("closeLong" , fund.closeLong);
-    
-        strategy.on("openShort" , fund.openShort)
-    
-        strategy.on("closeShort" , fund.closeShort);
-  
-        // -- Events End
       }
       
       let lastKline = klines[klines.length -1];
@@ -91,14 +71,14 @@ const startTestMode = async() => {
   
         for(k=0; k< strategies.length; k++) {
           const strategy = strategies[k];
-          const fund = funds[k]
+          const funds = strategy.funds;
           for(let l = 0; l < klines.length; l++) {
             strategy.addKline(klines[l]);
           }
   
           if(lastKline) {
             lastOpenTime = new Date(lastKline.opentime);
-            console.log(`${getPrettyDatetime(lastOpenTime)} ${strategy.constructor.name} ${symbol} ${period} ${fund.totalWin}`);
+            console.log(`${getPrettyDatetime(lastOpenTime)} ${strategy.constructor.name} ${symbol} ${period} ${funds.totalWin}`);
           }
         }
         await sleep(350);
