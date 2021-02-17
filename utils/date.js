@@ -18,13 +18,13 @@ function getPrettyDatetime(dateIn) {
     let year = date_ob.getFullYear();
 
     // current hours
-    let hours = date_ob.getHours();
+    let hours = ("0" + (date_ob.getHours() + 1)).slice(-2);
 
     // current minutes
-    let minutes = date_ob.getMinutes();
+    let minutes = ("0" + (date_ob.getMinutes() + 1)).slice(-2);
 
     // current seconds
-    let seconds = date_ob.getSeconds();
+    let seconds = ("0" + (date_ob.getSeconds() + 1)).slice(-2);
 
     return year + "-" + month + "-" + date + " " + hours + ":" + minutes + ":" + seconds;
 }
